@@ -112,7 +112,7 @@ h3{font-size:16px;margin:0 0 10px;font-weight:700}
 .tgl.on::after{left:21px}
 input[type=range]{width:100%;accent-color:var(--acc2);margin:6px 0}
 /* swipe */
-.deck{position:relative;height:330px;margin-top:4px}
+.deck{position:relative;height:420px;margin-top:4px}
 .tcard{position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;touch-action:pan-y;user-select:none;cursor:grab;transition:transform .3s,opacity .3s}
 .tcard.under{transform:scale(.95) translateY(10px);opacity:.6;pointer-events:none}
 .tcard .te{font-size:84px;line-height:1;margin-bottom:14px}
@@ -252,6 +252,28 @@ input[type=range]{width:100%;accent-color:var(--acc2);margin:6px 0}
 .tchip{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 11px;border-radius:9px;background:var(--soft);color:var(--accInk);font-weight:700;font-size:13px}
 .tchip:hover{background:var(--acc2);color:#231C15}
 .tcustom{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 10px}
+/* калькулятор калорий */
+.bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 0}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+.fld input{width:100%;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:0 12px;font-size:16px;font-weight:600;color:var(--ink);outline:none}
+.fld input:focus{border-color:var(--acc2)}
+.arow{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;padding:9px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--card)}
+.arow b{font-size:14px;font-weight:600}
+.arow small{color:var(--muted);font-size:12px}
+.arow.on{background:var(--soft);border-color:var(--acc2)}
+.arow.on b{color:var(--accInk)}
+.bcres{display:flex;align-items:baseline;gap:8px;margin:16px 0 4px}
+.bcres b{font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+/* фото блюд */
+.pic{position:relative;overflow:hidden}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.pic em{font-style:normal}
+.tph{display:grid;place-items:center;width:100%;height:170px;border-radius:16px;background:var(--soft2);font-size:72px;margin-bottom:14px;flex:0 0 auto}
+.hero .hs button .he{flex:0 0 52px;height:52px;border-radius:12px;display:grid;place-items:center;font-size:26px;background:rgba(255,255,255,.5)}
+.rphoto{margin:0 0 14px}
+.rphoto img{display:block;width:100%;max-width:100%;aspect-ratio:4/3;max-height:340px;object-fit:cover;border-radius:18px;background:var(--soft2)}
+.rphoto figcaption{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.35}
+.rphoto figcaption a{color:inherit}
 /* таймеры */
 .tdock{position:fixed;z-index:25;right:max(12px, env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;width:min(340px, calc(100vw - 24px))}
 .tdock:empty{display:none}
@@ -297,12 +319,24 @@ textarea{width:100%;min-height:70px;border-radius:12px;border:1.5px solid var(--
 <script src="recipes-kd.js"></script>
 <script src="prices.js"></script>
 <script src="metro.js"></script>
+<script src="photos.js"></script>
 <script>
 'use strict';
 /* =================== ДАННЫЕ И ХЕЛПЕРЫ =================== */
 const RECIPES = window.RECIPES || [];
 const PRICES = window.PRICES || {};
 const R = {}; RECIPES.forEach(r => R[r.id] = r);
+/* Фото блюд (Wikimedia Commons). Если фото нет или оно не загрузилось — остаётся эмодзи. */
+const PHOTOS = window.PHOTOS || {};
+function pic(r, cls){
+  const p = PHOTOS[r.id];
+  return `<span class="${cls} pic">${p ? `<img src="${esc(p.f)}" alt="" loading="lazy">` : ''}<em>${r.e}</em></span>`;
+}
+function photoFigure(r){
+  const p = PHOTOS[r.id]; if (!p) return '';
+  return `<figure class="rphoto"><img src="${esc(p.f)}" alt="${esc(r.n)}"><figcaption>Фото для примера: ${esc(p.a)}, ${esc(p.l)}, <a href="${esc(p.u)}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>`;
+}
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.closest('.pic, .rphoto')) { const f = t.closest('.rphoto'); f ? f.remove() : t.remove(); } }, true);
 const KEY = 'cucina-italiana-v1';
 
 const $ = s => document.querySelector(s);
@@ -339,7 +373,7 @@ const keeps = r => r && !NOKEEP.has(r.t) && !NOKEEP_ID.has(r.id);
 function defaults(){
   const t = new Date(); t.setDate(t.getDate() + 1);
   return { diet:'all', excl:[], taste:{}, people:2, meals:{b:true,l:true,d:true}, leftovers:false, project:true,
-    kcal:1800, budgetOn:true, budget:9000, cheap:false, eq:{oven:true, fry:true}, level:1, wdTime:45, start:iso(t), days:7, book:true };
+    kcal:1800, body:null, budgetOn:true, budget:9000, cheap:false, eq:{oven:true, fry:true}, level:1, wdTime:45, start:iso(t), days:7, book:true };
 }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } }
 function save(){ S.updated = Date.now(); saveLocal(); queueCloud(); }
@@ -436,6 +470,56 @@ function dietBadge(r, ex){
 }
 const dots = d => '●'.repeat(d) + '○'.repeat(3 - d);
 const DIFF = ['', 'легко', 'средне', 'сложно'];
+
+/* =================== КАЛЬКУЛЯТОР НОРМЫ КАЛОРИЙ =================== */
+/* Формула Миффлина — Сан-Жеора: обмен в покое × коэффициент активности, затем поправка на цель. */
+const ACT = [[1.2, 'Сидячий образ жизни', 'офис, почти без тренировок'], [1.375, 'Лёгкая активность', '1–3 тренировки в неделю'],
+  [1.55, 'Средняя активность', '3–5 тренировок в неделю'], [1.725, 'Высокая активность', '6–7 тренировок или физический труд']];
+const GOALS = [['lose', 'Похудеть', '−15%'], ['keep', 'Держать вес', 'без изменений'], ['gain', 'Набрать', '+10%']];
+const bodyDefaults = () => ({ sex:'f', age:'', height:'', weight:'', act:1.375, goal:'keep' });
+function calcKcal(b){
+  const h = Number(b.height), w = Number(b.weight), a = Number(b.age);
+  if (!(h >= 120 && h <= 220 && w >= 30 && w <= 250 && a >= 18 && a <= 80)) return null;
+  const bmr = 10 * w + 6.25 * h - 5 * a + (b.sex === 'm' ? 5 : -161);
+  const tdee = bmr * b.act, bmi = w / Math.pow(h / 100, 2);
+  let goal = b.goal, notes = [];
+  if (goal === 'lose' && bmi < 18.5) { goal = 'keep'; notes.push('При таком ИМТ худеть не стоит, поэтому показана норма для поддержания веса.'); }
+  let kcal = tdee * (goal === 'lose' ? 0.85 : goal === 'gain' ? 1.10 : 1);
+  const floor = b.sex === 'm' ? 1500 : 1200;
+  if (kcal < floor) { kcal = floor; notes.push('Ниже ' + num(floor) + ' ккал в день без врача опускаться не стоит — взят этот минимум.'); }
+  kcal = Math.min(3500, Math.max(1200, Math.round(kcal / 50) * 50));
+  return { bmr: Math.round(bmr), tdee: Math.round(tdee), kcal, bmi, goal, notes };
+}
+function bmiLabel(x){ return x < 18.5 ? 'ниже нормы' : x < 25 ? 'в пределах нормы' : x < 30 ? 'выше нормы' : 'значительно выше нормы'; }
+function calcResultHTML(d){
+  const b = d.body, r = calcKcal(b);
+  if (!r) return `<p class="muted small" style="margin:14px 0 0">Введи рост (120–220 см), вес (30–250 кг) и возраст (18–80 лет) — и я посчитаю норму. Формула рассчитана на взрослых.</p>`;
+  const delta = r.goal === 'lose' ? ' · цель −15%' : r.goal === 'gain' ? ' · цель +10%' : '';
+  return `<div class="bcres"><b>${num(r.kcal)}</b><span class="muted">ккал в день</span></div>
+    <p class="muted small" style="margin:0 0 10px">Обмен в покое ${num(r.bmr)} · с учётом активности ${num(r.tdee)}${delta}.<br>ИМТ ${r.bmi.toFixed(1).replace('.', ',')} — ${bmiLabel(r.bmi)}.</p>
+    ${r.notes.map(n => `<p class="small" style="margin:0 0 10px;color:var(--red)">${esc(n)}</p>`).join('')}
+    <button class="btn acc" style="width:100%;height:46px" data-act="bApply">Применить ${num(r.kcal)} ккал</button>
+    <p class="muted small" style="margin:10px 0 0">Это оценка по формуле Миффлина — Сан-Жеора, а не медицинская рекомендация. При беременности, кормлении грудью, диабете и других состояниях норму лучше уточнить у врача.</p>`;
+}
+function calcBlock(d){
+  const btn = `<button class="btn" style="width:100%;height:46px;margin-top:12px" data-act="bToggle">🧮 ${Q.calc ? 'Скрыть калькулятор' : 'Посчитать по росту и весу'}</button>`;
+  if (!Q.calc || !d.body) return btn;
+  const b = d.body, chip = (k, v, on, t) => `<button class="chip sm${on ? ' on' : ''}" data-act="bset" data-k="${k}" data-v="${v}">${t}</button>`;
+  return btn + `<div class="card" style="padding:16px;margin-top:12px">
+    <div class="grp" style="margin:0 0 8px">Пол</div>
+    <div class="chips">${chip('sex', 'f', b.sex === 'f', 'Женский')}${chip('sex', 'm', b.sex === 'm', 'Мужской')}</div>
+    <div class="bgrid">
+      <label class="fld"><span>Рост, см</span><input id="bc-height" type="number" inputmode="numeric" min="120" max="220" placeholder="165" value="${esc(b.height)}"></label>
+      <label class="fld"><span>Вес, кг</span><input id="bc-weight" type="number" inputmode="decimal" min="30" max="250" step="0.1" placeholder="60" value="${esc(b.weight)}"></label>
+      <label class="fld"><span>Возраст</span><input id="bc-age" type="number" inputmode="numeric" min="18" max="80" placeholder="30" value="${esc(b.age)}"></label>
+    </div>
+    <div class="grp" style="margin:14px 0 8px">Активность</div>
+    <div style="display:grid;gap:6px">${ACT.map(a => `<button class="arow${b.act === a[0] ? ' on' : ''}" data-act="bset" data-k="act" data-v="${a[0]}"><b>${a[1]}</b><small>${a[2]}</small></button>`).join('')}</div>
+    <div class="grp" style="margin:14px 0 8px">Цель</div>
+    <div class="chips">${GOALS.map(g => chip('goal', g[0], b.goal === g[0], g[1] + (g[0] === 'keep' ? '' : ' ' + g[2]))).join('')}</div>
+    <div id="bc-result">${calcResultHTML(d)}</div>
+  </div>`;
+}
 function timeStr(m){ if (m < 60) return m + ' мин'; const h = Math.floor(m / 60), r = m % 60; return h + ' ч' + (r ? ' ' + r + ' мин' : ''); }
 
 /* ---------- товары METRO ---------- */
@@ -688,14 +772,14 @@ const STEPS = [
   { k:'taste', label:'Вкусы', title:'Что тебе нравится?', sub:'Свайпни вправо — нравится, влево — не моё. Так соберём твою вкусовую карту.' },
   { k:'people', label:'Кто ест', title:'На сколько человек готовим?', sub:'Влияет на размер порций и объём закупки.' },
   { k:'meals', label:'Приёмы пищи', title:'Что планируем каждый день?', sub:'Отметь приёмы пищи, которые хочешь готовить по-итальянски.' },
-  { k:'kcal', label:'Калории', title:'Сколько калорий в день?', sub:'Под эту норму подберём блюда. Поменять можно в любой момент.' },
+  { k:'kcal', label:'Калории', title:'Сколько калорий в день?', sub:'Под эту норму подберём блюда. Не знаешь свою — посчитай по росту и весу. Поменять можно в любой момент.' },
   { k:'budget', label:'Бюджет', title:'Бюджет на неделю', sub:'Не будем предлагать то, что в него не влезет. Цены — по интернет-магазину METRO.' },
   { k:'eq', label:'Кухня', title:'Что есть на кухне?', sub:'Отметь, чем реально готовишь. Рецепты подберём только под это.' },
   { k:'level', label:'Практика', title:'Твой уровень и время', sub:'Будем постепенно усложнять: в будни — по силам, в выходные — новая техника.' },
   { k:'start', label:'Старт', title:'Когда начинаем?', sub:'Распишем блюда на каждый день и соберём список покупок.' }
 ];
 
-function startQuiz(fromSettings){
+function startQuiz(fromSettings){ Q.calc = false;
   Q.d = clone(S.a || defaults()); if (!Q.d.start || Q.d.start < todayISO()) Q.d.start = defaults().start;
   Q.step = 0; Q.from = fromSettings ? 'app' : 'intro'; view = 'quiz'; render();
 }
@@ -745,6 +829,7 @@ function quizHTML(){
     case 'kcal':
       body = `<div class="card stepper"><button class="round" data-act="num" data-k="kcal" data-d="-100" data-min="1200" data-max="3500">−</button><div class="val"><b>${d.kcal ? num(d.kcal) : '—'}</b><span>${d.kcal ? 'ккал в день' : 'не считаем'}</span></div><button class="round" data-act="num" data-k="kcal" data-d="100" data-min="1200" data-max="3500">+</button></div>
       <div class="chips" style="margin-top:12px;justify-content:center">${[1500,1800,2000,2200,2500].map(v => `<button class="chip sm${d.kcal === v ? ' on' : ''}" data-act="set" data-k="kcal" data-v="${v}" data-num="1">${num(v)}</button>`).join('')}<button class="chip sm${!d.kcal ? ' on' : ''}" data-act="set" data-k="kcal" data-v="0" data-num="1">Не считать</button></div>
+      ${calcBlock(d)}
       <div class="note"><span class="ni">⚖️</span><div><b>Ориентир на одного человека</b>Будем подбирать завтрак ≈25%, обед ≈40% и ужин ≈35% от нормы. Калорийность порций указана примерно.</div></div>`;
       break;
     case 'budget': {
@@ -803,7 +888,7 @@ function tasteHTML(){
   const ex = effExcl(d);
   const card = (id, cls) => { const r = R[id]; return `<div class="card tcard ${cls}" ${cls ? '' : 'id="tcard"'}>
     <span class="stamp like">НРАВИТСЯ</span><span class="stamp nope">НЕ МОЁ</span>
-    <div class="te">${r.e}</div><div class="tn">${esc(r.n)}</div><div class="ti">${esc(r.it)}</div>
+    ${pic(r, 'tph')}<div class="tn">${esc(r.n)}</div><div class="ti">${esc(r.it)}</div>
     <div class="tm">${r.kcal} ккал · порция · ${timeStr(r.time)} · ${DIFF[r.d]}</div><div class="td">${esc(r.desc)}</div>${r.book ? `<div style="margin-top:10px"><span class="badge b">📖 ${esc(r.src || 'из книги')}</span></div>` : ''}</div>`; };
   const next = Q.deck[Q.ti + 1];
   return `<div class="deck">${next ? card(next, 'under') : ''}${card(Q.deck[Q.ti], '')}</div>
@@ -867,7 +952,7 @@ function menuHTML(){
   if (ti >= 0) {
     const d = p.days[ti];
     hero = `<div class="card hero"><div class="hl">Сегодня · ${WD[parseISO(d.date).getDay()]}</div><h2>Что готовим сегодня</h2><div class="hs">
-      ${['b','l','d','x'].filter(m => d.slots[m]).map(m => { const r = R[d.slots[m].id]; return `<button data-act="open" data-di="${ti}" data-m="${m}"><span class="he">${r.e}</span><span><small>${MEAL[m].t}${d.slots[m].left ? ' · остатки' : ''}</small><b>${esc(r.n)}</b></span></button>`; }).join('')}</div></div>`;
+      ${['b','l','d','x'].filter(m => d.slots[m]).map(m => { const r = R[d.slots[m].id]; return `<button data-act="open" data-di="${ti}" data-m="${m}">${pic(r, 'he')}<span><small>${MEAL[m].t}${d.slots[m].left ? ' · остатки' : ''}</small><b>${esc(r.n)}</b></span></button>`; }).join('')}</div></div>`;
   }
   const over = a.budgetOn && st.cost > a.budget * 1.05;
   return `<h1 style="margin-top:4px">Рацион на ${weekTitle()}</h1>
@@ -889,7 +974,7 @@ function menuHTML(){
           const sl = d.slots[m];
           if (!sl) return `<div class="slot"><div class="empty">${MEAL[m].e} ${MEAL[m].t}: нет подходящих блюд — ослабь ограничения в настройках</div></div>`;
           const r = R[sl.id];
-          return `<div class="slot${sl.done ? ' done' : ''}"><button class="slot-main" data-act="open" data-di="${di}" data-m="${m}"><span class="se">${r.e}</span><span class="slot-txt"><span class="ml">${MEAL[m].t}${r.book ? ' · 📖' : ''}</span><b>${esc(r.n)}</b><span class="mt">${slotMeta(r, di, m, sl)}</span></span></button>
+          return `<div class="slot${sl.done ? ' done' : ''}"><button class="slot-main" data-act="open" data-di="${di}" data-m="${m}">${pic(r, 'se')}<span class="slot-txt"><span class="ml">${MEAL[m].t}${r.book ? ' · 📖' : ''}</span><b>${esc(r.n)}</b><span class="mt">${slotMeta(r, di, m, sl)}</span></span></button>
             <div class="slot-tools"><button class="tool" data-act="swap" data-di="${di}" data-m="${m}" title="Заменить блюдо">↻</button><button class="tool" data-act="pick" data-di="${di}" data-m="${m}" title="Выбрать из рецептов">☰</button></div></div>`;
         }).join('')}
       </div>`;
@@ -938,7 +1023,7 @@ function libList(){
   });
   if (!list.length) return '<p class="muted" style="text-align:center;padding:30px 0">Ничего не нашлось</p>';
   return `<div class="lib">${list.map(r => { const w = whyNot(r, a, ex); const n = S.log.filter(l => l.id === r.id).length;
-    return `<button class="card rc${w ? ' off' : ''}" data-act="open" data-id="${r.id}"><span class="se">${r.e}</span><span><b>${esc(r.n)}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал${r.book ? ' · 📖' : ''}${n ? ' · ✓' + n : ''}</small>${w ? `<small>Не подходит: ${esc(w)}</small>` : ''}</span></button>`; }).join('')}</div>`;
+    return `<button class="card rc${w ? ' off' : ''}" data-act="open" data-id="${r.id}">${pic(r, 'se')}<span><b>${esc(r.n)}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал${r.book ? ' · 📖' : ''}${n ? ' · ✓' + n : ''}</small>${w ? `<small>Не подходит: ${esc(w)}</small>` : ''}</span></button>`; }).join('')}</div>`;
 }
 function libHTML(){
   return `<h1 style="margin-top:4px">Рецепты</h1><p class="sub">${RECIPES.length} блюд итальянской кухни. Блюда, отмеченные 📖, — по мотивам книг «Everyday Italian» и «Knife Drop».</p>
@@ -980,7 +1065,8 @@ function recipeHTML(){
   const hist = S.log.filter(l => l.id === r.id);
   const sl = M.di != null ? S.plan.days[M.di].slots[M.m] : null;
   return `<button class="x" data-act="close" aria-label="Закрыть">✕</button>
-    <div class="rhero"><span class="re">${r.e}</span><div><h2>${esc(r.n)}</h2><div class="it">${esc(r.it)}</div></div></div>
+    ${photoFigure(r)}
+    <div class="rhero">${PHOTOS[r.id] ? '' : `<span class="re">${r.e}</span>`}<div><h2>${esc(r.n)}</h2><div class="it">${esc(r.it)}</div></div></div>
     <div class="meta"><span>⏱ ${timeStr(r.time)}</span><span>${dots(r.d)} ${DIFF[r.d]}</span><span>🔥 ${Math.round(r.kcal * M.pf / 10) * 10} ккал/порц.</span><span>${dietBadge(r, ex)}</span><span>≈ ${rub(costPortion(r, ex) * M.portions * M.pf)}</span>${r.book ? `<span>📖 по мотивам «${esc(r.src || 'Everyday Italian')}»</span>` : ''}</div>
     ${sl && sl.left ? `<div class="tip">🍱 Это остатки вчерашнего ужина — достаточно разогреть. Рецепт ниже — для справки.</div>` : ''}
     ${w ? `<div class="tip" style="background:var(--redSoft)">⚠️ По твоим настройкам не подходит: ${esc(w)}</div>` : ''}
@@ -1016,7 +1102,7 @@ function pickerHTML(){
     <h2 style="padding-right:40px">${MEAL[M.m].t} · ${WDS[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}</h2>
     <p class="muted small" style="margin:2px 0 12px">Сверху — то, что лучше всего подходит под твои настройки и меню недели.</p>
     <input class="search" id="pickq" placeholder="Поиск" value="${esc(M.q || '')}">
-    <div id="picklist">${list.map(({ r }) => `<button class="pick" data-act="pickSet" data-id="${r.id}"><span class="se">${r.e}</span><span style="flex:1"><b>${esc(r.n)}${cur && cur.id === r.id ? ' · сейчас' : ''}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал · ≈ ${rub(costPortion(r, ex))}/порц.${r.book ? ' · 📖' : ''}</small></span></button>`).join('') || '<p class="muted">Ничего не нашлось</p>'}</div>`;
+    <div id="picklist">${list.map(({ r }) => `<button class="pick" data-act="pickSet" data-id="${r.id}">${pic(r, 'se')}<span style="flex:1"><b>${esc(r.n)}${cur && cur.id === r.id ? ' · сейчас' : ''}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал · ≈ ${rub(costPortion(r, ex))}/порц.${r.book ? ' · 📖' : ''}</small></span></button>`).join('') || '<p class="muted">Ничего не нашлось</p>'}</div>`;
 }
 /* =================== ТАЙМЕРЫ =================== */
 /* Находит в тексте шага время: «10 минут», «10–12 минут», «30 секунд», «1,5–2 часа».
@@ -1164,6 +1250,9 @@ document.addEventListener('click', e => {
       if (ds.k === 'people' && prev !== v) Q.d.budget = Math.max(1500 * v, Math.min(10000 * v, Math.round(Q.d.budget / prev * v / 500) * 500));
       render(); break;
     }
+    case 'bToggle': Q.calc = !Q.calc; if (Q.calc && !Q.d.body) Q.d.body = bodyDefaults(); render(); break;
+    case 'bset': Q.d.body[ds.k] = ds.k === 'act' ? Number(ds.v) : ds.v; render(); break;
+    case 'bApply': { const r = calcKcal(Q.d.body); if (r) { Q.d.kcal = r.kcal; Q.calc = false; render(); toast('Норма: ' + num(r.kcal) + ' ккал в день'); } break; }
     case 'taste': react(Number(ds.v)); break;
     case 'tasteSet': delete Q.d.taste[ds.id]; render(); break;
     case 'tasteMore': Q.deck = tasteDeck(Q.d, true); Q.ti = 0; render(); break;
@@ -1217,6 +1306,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('input', e => {
   if (e.target.id === 'budget') { Q.d.budget = Number(e.target.value); $('#bval').textContent = rub(Q.d.budget); $('#bper').textContent = '≈ ' + rub(Math.round(Q.d.budget / Q.d.people)) + ' на человека'; }
+  if (e.target.id && e.target.id.startsWith('bc-') && Q.d && Q.d.body) { Q.d.body[e.target.id.slice(3)] = e.target.value; const el = $('#bc-result'); if (el) el.innerHTML = calcResultHTML(Q.d); }
   if (e.target.id === 'libq') { LIB.q = e.target.value; $('#liblist').innerHTML = libList(); }
   if (e.target.id === 'pickq') { M.q = e.target.value; const tmp = document.createElement('div'); tmp.innerHTML = pickerHTML(); $('#picklist').innerHTML = tmp.querySelector('#picklist').innerHTML; }
 });

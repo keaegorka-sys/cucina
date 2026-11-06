@@ -10,7 +10,7 @@ import shutil
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES = ["recipes.js", "recipes-book.js", "recipes-kd.js", "prices.js", "metro.js"]
+FILES = ["recipes.js", "recipes-book.js", "recipes-kd.js", "prices.js", "metro.js", "photos.js"]
 
 
 def main(out_dir: str) -> None:
