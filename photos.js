@@ -486,5 +486,527 @@ window.PHOTOS = {
 "a": "Kolforn",
 "l": "CC BY-SA 4.0",
 "u": "https://commons.wikimedia.org/wiki/File:-2019-12-06_Boiled_egg_with_toasted_soliders,_Trimingham.JPG"
+},
+"kd_artichokes": {
+"f": "img/kd_artichokes.jpg",
+"a": "Marco Iannantuoni",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Carciofi_alla_Giud%C3%ACa.jpg"
+},
+"kd_dates": {
+"f": "img/kd_dates.jpg",
+"a": "Mack Male from Edmonton, AB, Canada",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Highlands_Kitchen_(7915802576).jpg"
+},
+"kd_chickpeas": {
+"f": "img/kd_chickpeas.jpg",
+"a": "Physicistjedi",
+"l": "Public domain",
+"u": "https://commons.wikimedia.org/wiki/File:Leblebi.jpg"
+},
+"kd_crab_dip": {
+"f": "img/kd_crab_dip.jpg",
+"a": "Imjustmatthew",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:CrabDipAndFlatbread.jpg"
+},
+"kd_onion_dip": {
+"f": "img/kd_onion_dip.jpg",
+"a": "Whitney in Chicago",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:French_onion_dip_topped_with_caramelized_onion.jpg"
+},
+"kd_hummus": {
+"f": "img/kd_hummus.jpg",
+"a": "Paul Goyette",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Hummus_from_The_Nile.jpg"
+},
+"kd_pancakes": {
+"f": "img/kd_pancakes.jpg",
+"a": "J Doll",
+"l": "CC BY 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chocolate_Chip_Brownie_Pancakes_(140491401).jpeg"
+},
+"kd_chicken_eggs": {
+"f": "img/kd_chicken_eggs.jpg",
+"a": "Takeaway",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Scrambed_eggs.jpg"
+},
+"kd_bagels": {
+"f": "img/kd_bagels.jpg",
+"a": "woodleywonderworks",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:The_American_Everything_Bagel.jpg"
+},
+"kd_benedict": {
+"f": "img/kd_benedict.jpg",
+"a": "Jon Mountjoy",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Eggs_Benedict-01-cropped.jpg"
+},
+"kd_hashbrowns": {
+"f": "img/kd_hashbrowns.jpg",
+"a": "Benoît Prieur",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Hashbrown_oignon_et_jambon_%C3%A0_Waffle_House_(Orlando)_en_f%C3%A9vrier_2022.JPG"
+},
+"kd_burrito": {
+"f": "img/kd_burrito.jpg",
+"a": "Andy Li",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Chorizo_breakfast_burrito_-_17_GRAMS_2024-02-05.jpg"
+},
+"kd_pattymelt": {
+"f": "img/kd_pattymelt.jpg",
+"a": "Valereee",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Finished_patty_melt,_cut_open.jpg"
+},
+"kd_grilled_cheese_blueberry": {
+"f": "img/kd_grilled_cheese_blueberry.jpg",
+"a": "Maggie Hoffman",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Grilled_cheese_sandwich.jpg"
+},
+"kd_blt": {
+"f": "img/kd_blt.jpg",
+"a": "jeffreyw",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Mmm..._BLT_for_me!_(5487341380).jpg"
+},
+"kd_chicken_sandwich": {
+"f": "img/kd_chicken_sandwich.jpg",
+"a": "Horacio Cambeiro",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Argentine_chicken_burger_sandwich_with_lettuce,_tomato,_fried_egg,_and_mozzarella_cheese_on_Don_Yeyo_bun_-_Front_view.jpg"
+},
+"kd_tuna_melt": {
+"f": "img/kd_tuna_melt.jpg",
+"a": "kweez mcG from London, UK",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Tuna_melt_sandwich_with_fries.jpg"
+},
+"kd_gc_tomato_soup": {
+"f": "img/kd_gc_tomato_soup.jpg",
+"a": "jeffreyw",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Grilled_cheese_sandwich_with_roasted_tomato_soup.jpg"
+},
+"kd_quesadilla": {
+"f": "img/kd_quesadilla.jpg",
+"a": "Missvain",
+"l": "CC BY 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chicken_quesadilla_-_La_Casa_Restaurant_-_August_2023_-_Sarah_Stierch.jpg"
+},
+"kd_smash_burger": {
+"f": "img/kd_smash_burger.jpg",
+"a": "Wiki.cullin",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Double_Smash_Burger_with_Fries.jpg"
+},
+"kd_fried_chicken": {
+"f": "img/kd_fried_chicken.jpg",
+"a": "Brian Chan tigerrulezzz",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Fried_Chicken_(Unsplash).jpg"
+},
+"kd_chicken_skins": {
+"f": "img/kd_chicken_skins.jpg",
+"a": "Richmond Chi",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chicken_Skin.jpg"
+},
+"kd_butter_chicken": {
+"f": "img/kd_butter_chicken.jpg",
+"a": "stu_spivack",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chicken_makhani.jpg"
+},
+"kd_dino_nuggets": {
+"f": "img/kd_dino_nuggets.jpg",
+"a": "Mx",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Impossible_chicken_nuggets_2.jpg"
+},
+"kd_chicken_salad": {
+"f": "img/kd_chicken_salad.jpg",
+"a": "Thomson200",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Chicken_Salad_Chick_Classic_Carol_scoop,_Jan_2020.jpg"
+},
+"kd_buffalo_rolls": {
+"f": "img/kd_buffalo_rolls.jpg",
+"a": "Missvain",
+"l": "CC BY 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Shanghai_Restaurant_-_August_2019_-_Stierch_02.jpg"
+},
+"kd_thai_soup": {
+"f": "img/kd_thai_soup.jpg",
+"a": "Evan Joshua Swigart (TheCulinaryGeek) from Chicago,…",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Flickr_preppybyday_4711943668--Tom_kha_gai.jpg"
+},
+"kd_ribeye": {
+"f": "img/kd_ribeye.jpg",
+"a": "danielhallpresentsdotcom",
+"l": "CC BY 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Ribeye_steak_and_asparagus.jpg"
+},
+"kd_ribs": {
+"f": "img/kd_ribs.jpg",
+"a": "CharmaineZoe's Marvelous Melange from England",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Pork_Ribs_(32852871933).jpg"
+},
+"kd_lamb": {
+"f": "img/kd_lamb.jpg",
+"a": "HaJunkiyada",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_%E2%80%93_Lamb_chops_with_asparagus.jpg"
+},
+"kd_chili": {
+"f": "img/kd_chili.jpg",
+"a": "Missvain",
+"l": "CC BY 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chili_-_Feburary_2023_-_Sarah_Stierch_03.jpg"
+},
+"kd_steak_tips": {
+"f": "img/kd_steak_tips.jpg",
+"a": "Paulo O from Halifax, Canada",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Derby_Tenderloin_Tips_at_Dartmouth_Steak_%26_Stein_(48381868826).jpg"
+},
+"kd_shepherd": {
+"f": "img/kd_shepherd.jpg",
+"a": "Andy Li",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Shepherds_pie_-_The_Kew_Greenhouse_Cafe_2025-05-14.jpg"
+},
+"kd_swedish_meatballs": {
+"f": "img/kd_swedish_meatballs.jpg",
+"a": "Vincenty846",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Swedish_Meatballs_IKEA_Kota_Baru_Parahyangan.jpg"
+},
+"kd_khao_soi": {
+"f": "img/kd_khao_soi.jpg",
+"a": "Chainwit.",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Khao_Soi_Northern_Thai_food_%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A7%E0%B8%8B%E0%B8%AD%E0%B8%A2_%E0%B8%9C%E0%B8%B1%E0%B8%81%E0%B8%94%E0%B8%AD%E0%B8%87.jpg"
+},
+"kd_lobster_roll": {
+"f": "img/kd_lobster_roll.jpg",
+"a": "Lee Coursey",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Lobster_Roll_at_the_Lobster_Claw,_Bar_Harbor.jpg"
+},
+"kd_scallops": {
+"f": "img/kd_scallops.jpg",
+"a": "Jon Sullivan",
+"l": "Public domain",
+"u": "https://commons.wikimedia.org/wiki/File:Baked_scallops_food.jpg"
+},
+"kd_fish_chips": {
+"f": "img/kd_fish_chips.jpg",
+"a": "Grendelkhan",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Fish_and_chips_plate_with_peas.jpg"
+},
+"kd_calamari2": {
+"f": "img/kd_calamari2.jpg",
+"a": "Ocdp",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Deep_fried_squid_001.jpg"
+},
+"kd_salmon_air": {
+"f": "img/kd_salmon_air.jpg",
+"a": "DanaTentis",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Grilled_plated_salmon_fillet_(cropped).jpg"
+},
+"kd_tuna_rice": {
+"f": "img/kd_tuna_rice.jpg",
+"a": "Prayitno / Thank you for (12 millions +) view from Los…",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Spicy_Tuna_on_Crispy_Rice_(16231286314).jpg"
+},
+"kd_ceviche": {
+"f": "img/kd_ceviche.jpg",
+"a": "Rinaldo Wurglitsch",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Ceviche_ecuador.JPG"
+},
+"kd_fish_curry": {
+"f": "img/kd_fish_curry.jpg",
+"a": "Takeaway",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Kaeng_som_kung.jpg"
+},
+"kd_mezcal": {
+"f": "img/kd_mezcal.jpg",
+"a": "Prof.lumacorno",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Rigatoni_con_la_pajata.jpg"
+},
+"kd_lasagna": {
+"f": "img/kd_lasagna.jpg",
+"a": "Roundhere44",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Slice_of_Lasagna.jpg"
+},
+"kd_ramen_carbonara": {
+"f": "img/kd_ramen_carbonara.jpg",
+"a": "궁셔리여사",
+"l": "CC BY 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:%EB%A1%A4%EB%A7%81%ED%8C%8C%EC%8A%A4%ED%83%80_%EC%9B%94%EA%B3%84%EC%9D%B4%EB%A7%88%ED%8A%B8%EC%A0%90_%EA%B9%8C%EB%A5%B4%EB%B3%B4%EB%82%98%EB%9D%BC_3.jpg"
+},
+"kd_pizza_grill": {
+"f": "img/kd_pizza_grill.jpg",
+"a": "Wikiuser100",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Grilled_pizza_2.jpg"
+},
+"kd_roast_potatoes": {
+"f": "img/kd_roast_potatoes.jpg",
+"a": "PattayaPatrol",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:DFC_3983_Crispy_breaded_schnitzel_with_lemon_wedge_golden_fried_potatoes_creamy_coleslaw_and_gravy_on_the_side_-_a_hearty_comfort_meal.jpg"
+},
+"kd_crispy_rice": {
+"f": "img/kd_crispy_rice.jpg",
+"a": "Hyeon-Jeong Suk",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Nurungji.jpg"
+},
+"kd_naan": {
+"f": "img/kd_naan.jpg",
+"a": "OpenCage",
+"l": "CC BY-SA 2.5",
+"u": "https://commons.wikimedia.org/wiki/File:Naan_shiva.jpg"
+},
+"kd_mash": {
+"f": "img/kd_mash.jpg",
+"a": "Renee Comet (photographer)",
+"l": "Public domain",
+"u": "https://commons.wikimedia.org/wiki/File:MashedPotatoes.jpg"
+},
+"kd_cheese_balls": {
+"f": "img/kd_cheese_balls.jpg",
+"a": "Murilo manzini",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Cheesebread.jpg"
+},
+"kd_tortillas": {
+"f": "img/kd_tortillas.jpg",
+"a": "Ocdp",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Flour_Tortillas_001.jpg"
+},
+"kd_wedge": {
+"f": "img/kd_wedge.jpg",
+"a": "Daderot",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Wedge_salad_-_Cambridge,_MA.jpg"
+},
+"kd_miso_eggplant": {
+"f": "img/kd_miso_eggplant.jpg",
+"a": "pelican from Tokyo, Japan",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Stir-fried_eggplant_with_miso_paste_(2705949129).jpg"
+},
+"kd_brussels": {
+"f": "img/kd_brussels.jpg",
+"a": "Kelly Sue",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Roasted_Brussels_Sprouts_with_Kumquats.jpg"
+},
+"kd_corn": {
+"f": "img/kd_corn.jpg",
+"a": "Dragne Marius marius_dragne",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Grilled_Corn_(Unsplash).jpg"
+},
+"kd_cucumbers": {
+"f": "img/kd_cucumbers.jpg",
+"a": "Benreis",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Gurkensalat_Potsdam.jpg"
+},
+"kd_caesar": {
+"f": "img/kd_caesar.jpg",
+"a": "Banej",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Caesar_Salad_from_Tony_Roma_Restaurant-_March_2024_02.jpg"
+},
+"kd_cupcakes": {
+"f": "img/kd_cupcakes.jpg",
+"a": "Marc-Lautenbacher",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Cupcakes,_chocolate_and_strawberry_flavour.jpg"
+},
+"kd_cookies": {
+"f": "img/kd_cookies.jpg",
+"a": "Evan-Amos",
+"l": "Public domain",
+"u": "https://commons.wikimedia.org/wiki/File:Choc-Chip-Cookie.jpg"
+},
+"kd_fruit_leather": {
+"f": "img/kd_fruit_leather.jpg",
+"a": "Matthieu Deuté",
+"l": "CC BY-SA 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:Cuirs_de_fruits_kiwi_banane_pomme_raisin_canneberge_pomme_kiwi_tomate.jpg"
+},
+"kd_horchata": {
+"f": "img/kd_horchata.jpg",
+"a": "Photocapy",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Horchata_de_chufa_2.jpg"
+},
+"kd_tanghulu": {
+"f": "img/kd_tanghulu.jpg",
+"a": "Riblet15",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Tanghulu_vendor_-_Tamsui,_Taiwan_(2017).jpg"
+},
+"kd_ice_cream": {
+"f": "img/kd_ice_cream.jpg",
+"a": "Mx",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Brave_Robot_ice_cream_4.jpg"
+},
+"kd_frosting": {
+"f": "img/kd_frosting.jpg",
+"a": "Raimond Spekking",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Buttercreme_in_einer_Glassch%C3%BCssel-8493.jpg"
+},
+"kd_wings": {
+"f": "img/kd_wings.jpg",
+"a": "punctuated",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Lemon-pepper-wings-01.png"
+},
+"kd_compost_cookies": {
+"f": "img/kd_compost_cookies.jpg",
+"a": "Brendan C",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Big_Game_Cookies_-ds446_(5417481256).jpg"
+},
+"kd_pretzels": {
+"f": "img/kd_pretzels.jpg",
+"a": "Missvain",
+"l": "CC0",
+"u": "https://commons.wikimedia.org/wiki/File:Auntie_Anne%27s_Classic_Soft_Frozen_Pretzels_-_Sarah_Stierch.jpg"
+},
+"kd_borscht": {
+"f": "img/kd_borscht.jpg",
+"a": "liz west from Boxborough, MA",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Borscht_served.jpg"
+},
+"kd_salt": {
+"f": "img/kd_salt.jpg",
+"a": "Ezokomachi",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Sodium_chloride(flaky-crystal).jpg"
+},
+"kd_brown_sugar": {
+"f": "img/kd_brown_sugar.jpg",
+"a": "Moe Rubenzahl",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Brown_sugar_examples.JPG"
+},
+"kd_pickling": {
+"f": "img/kd_pickling.jpg",
+"a": "Shisma",
+"l": "CC BY 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Glasses_of_pickled_cucumbers_2.jpg"
+},
+"kd_stock": {
+"f": "img/kd_stock.jpg",
+"a": "TheCulinaryGeek",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Chicken_Stock.jpg"
+},
+"kd_pasta_dough": {
+"f": "img/kd_pasta_dough.jpg",
+"a": "Joy",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:A_better_homemade_pasta.jpg"
+},
+"kd_croutons": {
+"f": "img/kd_croutons.jpg",
+"a": "Bi-frie (talk)",
+"l": "CC BY 3.0",
+"u": "https://commons.wikimedia.org/wiki/File:13-09-01-kochtreffen-wien-Bi-frie-004.jpg"
+},
+"kd_ranch": {
+"f": "img/kd_ranch.jpg",
+"a": "Whitney from Chicago, IL",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Ranch_dressing.jpg"
+},
+"kd_special_sauce": {
+"f": "img/kd_special_sauce.jpg",
+"a": "horax zeigt hier",
+"l": "CC BY-SA 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Crab_meat_in_shell_with_salad_and_Marie_Rose_sauce.jpg"
+},
+"kd_buffalo": {
+"f": "img/kd_buffalo.jpg",
+"a": "stef yau",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Homemade_buffalo_wings.jpg"
+},
+"kd_bbq": {
+"f": "img/kd_bbq.jpg",
+"a": "Joey Doll",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Apricot_BBQ_sauce_(43129550532).jpg"
+},
+"pollo_limone": {
+"f": "img/pollo_limone.jpg",
+"a": "HaJunkiyada",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Chicken_with_potatoes,_onion,_garlic,_and_rosemary_before_roasting.jpg"
+},
+"salsicce_fagioli": {
+"f": "img/salsicce_fagioli.jpg",
+"a": "Kolforn",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:-2021-12-03_Sausages,_Baked_Beans_and_Bubble_and_squeak,_Trimingham,_Norfolk.JPG"
+},
+"tagliata": {
+"f": "img/tagliata.jpg",
+"a": "Pug Girl",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Tagliata_with_Rosemary.jpg"
+},
+"agnello": {
+"f": "img/agnello.jpg",
+"a": "E4024",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Kuzu_kaburga_in_Istanbul.jpg"
+},
+"arista": {
+"f": "img/arista.jpg",
+"a": "Sara Goldsmith",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Roast_pork_loin,_potatoes_(2585116058).jpg"
+},
+"spiedini_pollo": {
+"f": "img/spiedini_pollo.jpg",
+"a": "Chloe Lim from Seoul, South Korea",
+"l": "CC BY 2.0",
+"u": "https://commons.wikimedia.org/wiki/File:Korean_spicy_chicken_skewers_(6325410086).jpg"
+},
+"uova_pancetta": {
+"f": "img/uova_pancetta.jpg",
+"a": "Jorgehdezalonso",
+"l": "CC BY-SA 4.0",
+"u": "https://commons.wikimedia.org/wiki/File:Duelos_y_quebrantos._Chef_Koketo.jpg"
 }
 };
