@@ -319,6 +319,10 @@ textarea{width:100%;min-height:70px;border-radius:12px;border:1.5px solid var(--
 <script src="recipes.js"></script>
 <script src="recipes-book.js"></script>
 <script src="recipes-kd.js"></script>
+<script src="recipes-kd2.js"></script>
+<script src="recipes-kd3.js"></script>
+<script src="recipes-kd4.js"></script>
+<script src="recipes-meat.js"></script>
 <script src="prices.js"></script>
 <script src="metro.js"></script>
 <script src="photos.js"></script>
@@ -369,13 +373,13 @@ const DIETS = [['all','🥩','Всеядное','Ем всё: мясо, рыбу
 const LEVELS = [[1,'🌱','Новичок','В будни — простые блюда, в выходные — шаг вперёд'],[2,'🍳','Уже готовлю','Будни — средние рецепты, выходные — сложные'],[3,'🔥','Хочу вызов','Сложные техники в любой день']];
 const UNIT = { 'пучок':['пучок','пучка','пучков'], 'стебель':['стебель','стебля','стеблей'], 'веточка':['веточка','веточки','веточек'], 'зубч':['зубчик','зубчика','зубчиков'], 'щепотка':['щепотка','щепотки','щепоток'], 'шт':['шт','шт','шт'], 'головка':['головка','головки','головок'] };
 const NOKEEP = new Set(['salad','pizza']);
-const NOKEEP_ID = new Set(['calamari','arancini','milanese','tuna_steak','eggs_toast']);
+const NOKEEP_ID = new Set(['calamari','arancini','milanese','tuna_steak','eggs_toast','kd_fried_chicken','kd_chicken_sandwich','kd_fish_chips','kd_calamari2','kd_wings','kd_smash_burger','kd_blt','kd_buffalo_rolls','kd_dino_nuggets','kd_tuna_melt','kd_wedge','kd_cucumbers','kd_caesar','kd_scallops','kd_salmon_air','kd_ceviche','kd_lobster_roll','kd_burrito','kd_quesadilla','kd_pattymelt','kd_pizza_grill','tagliata','straccetti','spiedini_pollo','uova_pancetta']);
 const keeps = r => r && !NOKEEP.has(r.t) && !NOKEEP_ID.has(r.id);
 
 function defaults(){
   const t = new Date(); t.setDate(t.getDate() + 1);
   return { diet:'all', excl:[], taste:{}, people:2, meals:{b:true,l:true,d:true}, leftovers:false, project:true,
-    kcal:1800, body:null, budgetOn:true, budget:9000, cheap:false, eq:{oven:true, fry:true}, level:1, wdTime:45, start:iso(t), days:7, book:true };
+    kcal:1800, meat:2, italianOnly:false, body:null, budgetOn:true, budget:9000, cheap:false, eq:{oven:true, fry:true}, level:1, wdTime:45, start:iso(t), days:7, book:true };
 }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } }
 function save(){ S.updated = Date.now(); saveLocal(); queueCloud(); }
@@ -461,7 +465,7 @@ function whyNot(r, a, ex){
   if (a.taste[r.id] === -1) return 'отмечено «не моё»';
   return '';
 }
-const eligible = (r, a, ex, ignoreTaste) => !r.al.some(t => ex.has(t)) && r.eq.every(e => a.eq[e]) && (ignoreTaste || a.taste[r.id] !== -1);
+const eligible = (r, a, ex, ignoreTaste) => !r.al.some(t => ex.has(t)) && !(a.italianOnly && r.world) && r.eq.every(e => a.eq[e]) && (ignoreTaste || a.taste[r.id] !== -1);
 
 function dietBadge(r, ex){
   const t = new Set(r.al); ingFor(r, ex).forEach(i => { if (typeof i[4] === 'string') t.add(i[4]); if (i[3] === 'd') t.add('lactose'); if (i[3] === 'm') t.add('meat'); });
@@ -587,10 +591,14 @@ function fmtQty(q, u, name){
 
 /* =================== ГЕНЕРАТОР МЕНЮ =================== */
 function mealsPerDay(a){ return ['b','l','d'].filter(m => a.meals[m]).length || 1; }
+/* Сколько мяса в меню: 0 — как получится, 1 — часто (≈ половина обедов и ужинов), 2 — много (почти каждый) */
+const meatLvl = a => a.meat == null ? 2 : a.meat;
+const isMeat = r => r.al.includes('meat');
 function fits(r, m, ctx, strict){
   if (!r.m.includes(m) || ctx.reject.includes(r.id)) return false;
   if (!strict || m === 'x') return true;
-  const maxD = ctx.weekend ? Math.min(3, ctx.a.level + 1) : ctx.a.level;
+  const meatUp = isMeat(r) && (m === 'l' || m === 'd') && meatLvl(ctx.a) > 0;   // мясные блюда допускаем на ступень сложнее
+  const maxD = Math.min(3, (ctx.weekend ? ctx.a.level + 1 : ctx.a.level) + (meatUp ? 1 : 0));
   if (r.d > maxD) return false;
   if (!ctx.weekend) { const lim = m === 'b' ? Math.min(ctx.a.wdTime || 999, 25) : (ctx.a.wdTime || 999); if (r.time > lim) return false; }
   return true;
@@ -602,6 +610,9 @@ function score(r, m, ctx){
   if (lg.length && lg[lg.length - 1].rating >= 4) s += 1.2;
   if (!lg.length) s += 0.8;                                    // ещё не готовили — новая техника
   if (a.book && r.book) s += 1.2;
+  const ml = meatLvl(a);
+  if (m === 'l' || m === 'd') { if (isMeat(r)) s += ml === 2 ? 6 : ml === 1 ? 1.2 : 0; else if (ml === 2) s -= 1.5; }
+  else if (m === 'b' && ml === 2 && isMeat(r)) s += 1.5;
   s -= (ctx.used[r.id] || 0) * (m === 'b' || m === 'x' ? 3 : 8);   // не повторяемся
   if (m === 'l' && r.c === 'primo') s += 1.8;                  // по-итальянски: обед — primo
   if (m === 'd' && r.c === 'secondo') s += 1.8;                // ужин — secondo
@@ -610,6 +621,8 @@ function score(r, m, ctx){
   const prev = ctx.prevDay; if (prev) for (const k in prev.slots) { const o = R[prev.slots[k].id]; if (o && o.t === r.t && m !== 'b') s -= 0.8; }
   let shared = 0; for (const i of r.ing) if ('vmfd'.includes(i[3]) && ctx.ings.has(i[0])) shared++;
   s += Math.min(shared, 4) * 0.45;                             // меньше остатков продуктов
+  let pantry = 0; for (const i of r.ing) if ('gcbo'.includes(i[3]) && !ctx.ings.has(i[0])) { const pr = prod(i[0]); if (pr) pantry += pr.p; }
+  s -= Math.min(5, pantry * 0.003);                            // новая банка или пачка в корзине — минус, особенно дорогая
   if (ctx.weekend && m !== 'b') s += r.d * 0.9;                // выходные — челлендж
   else if (a.level >= 2 && m !== 'b') s += (r.d - 1) * 0.6 * (a.level - 1);   // хочешь вызов — сложнее и в будни
   const pf = a.kcal && m !== 'x' ? Math.max(0.8, Math.min(1.5, a.kcal * SHARE[m] / r.kcal)) : 1;
@@ -617,7 +630,7 @@ function score(r, m, ctx){
   if (a.budgetOn && m !== 'x') {
     const proj = a.project ? 450 : 0;
     const target = Math.max(40, (a.budget - proj) / (a.people * mealsPerDay(a) * 7) * 0.92);  // ~8% уходит на округление упаковок
-    const c = costPortion(r, ctx.ex) * pf; if (c > target) s -= Math.min(9, (c - target) / target * 6);
+    const c = costPortion(r, ctx.ex) * pf; if (c > target) s -= Math.min(9, (c - target) / target * 6) * (isMeat(r) && ml === 2 ? 0.4 : 1);
   }
   if (m === 'd' && a.leftovers && a.meals.l && !keeps(r)) s -= 3;
   return s;
@@ -629,7 +642,7 @@ function pickBest(pool, m, ctx){
   let best = null, bs = -1e9; for (const r of c) { const s = score(r, m, ctx); if (s > bs) { bs = s; best = r; } }
   return best.id;
 }
-function noteUse(ctx, id){ ctx.used[id] = (ctx.used[id] || 0) + 1; for (const i of R[id].ing) if ('vmfd'.includes(i[3])) ctx.ings.add(i[0]); }
+function noteUse(ctx, id){ ctx.used[id] = (ctx.used[id] || 0) + 1; for (const i of R[id].ing) if ('vmfdgcbo'.includes(i[3])) ctx.ings.add(i[0]); }
 function buildPlan(a, seed){
   const ex = effExcl(a), pool = RECIPES.filter(r => eligible(r, a, ex));
   const base = { a, ex, rand: rng(seed), used:{}, ings:new Set() };
@@ -823,7 +836,10 @@ function quizHTML(){
   const opt = (act, attrs, on, e, t, s, row) => `<button class="opt${row ? ' row' : ''}${on ? ' on' : ''}" data-act="${act}" ${attrs}><span class="oe">${e}</span>${row ? '<span>' : ''}<span class="ot">${t}</span>${s ? `<span class="os">${s}</span>` : ''}${row ? '</span>' : ''}<i class="chk">✓</i></button>`;
   switch (st.k) {
     case 'diet':
-      body = `<div style="display:grid;gap:10px">${DIETS.map(x => opt('set', `data-k="diet" data-v="${x[0]}"`, d.diet === x[0], x[1], x[2], x[3], true)).join('')}</div>`;
+      body = `<div style="display:grid;gap:10px">${DIETS.map(x => opt('set', `data-k="diet" data-v="${x[0]}"`, d.diet === x[0], x[1], x[2], x[3], true)).join('')}</div>
+      ${d.diet === 'all' ? `<div class="grp">Сколько мяса в меню</div>
+        <div class="chips">${[[0,'Как получится'],[1,'Часто'],[2,'Много']].map(x => `<button class="chip${meatLvl(d) === x[0] ? ' on' : ''}" data-act="set" data-k="meat" data-v="${x[0]}" data-num="1">🥩 ${x[1]}</button>`).join('')}</div>
+        <div class="note"><span class="ni">🥩</span><div><b>${['Мясо — как получится','Мясо в половине обедов и ужинов','Мясо почти в каждом обеде и ужине'][meatLvl(d)]}</b>${['Меню сбалансировано: паста, рыба, овощи и мясо.','Курица, говядина, свинина и индейка — через день.','Каждый обед и ужин — с мясом, где это возможно. Покупок будет больше, бюджет выше.'][meatLvl(d)]}</div></div>` : ''}`;
       break;
     case 'excl':
       body = `<div class="grp">Аллергии</div><div class="chips">${EXCL.allergy.map(x => `<button class="chip${d.excl.includes(x[0]) ? ' on' : ''}" data-act="excl" data-v="${x[0]}">${x[1]} ${x[2]}</button>`).join('')}</div>
@@ -840,6 +856,7 @@ function quizHTML(){
       <div class="card" style="margin-top:14px">
         ${switchHTML('leftovers', d.leftovers, 'Ужин с запасом на обед', 'Готовишь вечером двойную порцию — завтра обед уже есть')}
         ${switchHTML('project', d.project, 'Проект выходного', 'Фокачча, тирамису, домашний соус — практика без спешки')}
+        ${switchHTML('italianOnly', d.italianOnly, 'Только итальянская кухня', 'Без бургеров, карри и других неитальянских блюд из «Knife Drop»')}
         ${switchHTML('book', d.book, 'Больше блюд из книг', '«Everyday Italian» и «Knife Drop»')}
       </div>`;
       break;
@@ -973,7 +990,7 @@ function menuHTML(){
   }
   const over = a.budgetOn && st.cost > a.budget * 1.05;
   return `<h1 style="margin-top:4px">Рацион на ${weekTitle()}</h1>
-    <p class="sub">${a.people} ${plural(a.people, ['человек','человека','человек'])} · ${DIETS.find(x => x[0] === a.diet)[2].toLowerCase()} · уровень «${LEVELS[a.level - 1][2]}»</p>
+    <p class="sub">${a.people} ${plural(a.people, ['человек','человека','человек'])} · ${DIETS.find(x => x[0] === a.diet)[2].toLowerCase()} · уровень «${LEVELS[a.level - 1][2]}»${(() => { const ms = p.days.flatMap(d => ['l','d'].map(k => d.slots[k]).filter(Boolean)); const n = ms.filter(s => R[s.id] && isMeat(R[s.id])).length; return a.diet === 'all' && ms.length ? ` · 🥩 мясо в ${n} из ${ms.length} обедов и ужинов` : ''; })()}</p>
     ${hero}
     <div class="stats">
       <div class="card stat"><b>${st.cook}</b><span>${plural(st.cook, ['блюдо','блюда','блюд'])} приготовить</span></div>
@@ -1003,7 +1020,7 @@ function shopHTML(){
   const used = main.reduce((s, i) => s + i.used, 0), stock = total - used;
   const left = main.filter(i => !S.shop[i.k]).length, a = S.a, MT = window.METRO;
   const row = i => `<div class="item${S.shop[i.k] ? ' on' : ''}" data-act="shopToggle" data-k="${esc(i.k)}"><span class="cb">✓</span>
-      <span class="in">${i.pr ? `<a href="${esc(MT.base + i.pr.url)}" target="_blank" rel="noopener"><b>${esc(i.name)}</b></a>` : `<b>${esc(i.name)}</b>`}${i.opt ? ' <span class="badge g">по желанию</span>' : ''}<small>для: ${esc([...i.for].join(', '))}</small>${i.names.has('Болгарский перец') && !S.a.excl.includes('pepper') ? '<button class="tchip dropchip" data-act="dropTag" data-tag="pepper">✕ Убрать болгарский перец</button>' : ''}</span>
+      <span class="in">${i.pr ? `<a href="${esc(MT.base + i.pr.url)}" target="_blank" rel="noopener"><b>${esc(i.name)}</b></a>` : `<b>${esc(i.name)}</b>`}${i.opt ? ' <span class="badge g">по желанию</span>' : ''}${!i.pr && !i.base ? ' <span class="badge">нет в METRO</span>' : ''}<small>для: ${esc([...i.for].join(', '))}</small>${i.names.has('Болгарский перец') && !S.a.excl.includes('pepper') ? '<button class="tchip dropchip" data-act="dropTag" data-tag="pepper">✕ Убрать болгарский перец</button>' : ''}</span>
       <span class="iq"><b>${esc(i.label)}</b>${i.cost ? `<small>${rub(i.cost)}</small>` : ''}${i.sub ? `<small>${esc(i.sub)}</small>` : ''}</span></div>`;
   return `<h1 style="margin-top:4px">Список покупок</h1>
     <p class="sub">${weekTitle()} · на ${a.people} ${plural(a.people, ['человека','человек','человек'])}${a.leftovers ? ' · с запасом на обеды' : ''}. Осталось купить: ${left} из ${main.length}.</p>
@@ -1024,7 +1041,7 @@ function shopHTML(){
     <p class="sync">${SYNC_TEXT[CLOUD.status]}</p>`;
 }
 let LIB = { f:'all', q:'' };
-const LIBF = [['all','Все'],['fit','Подходят мне'],['book','📖 Из книги'],['b','Завтраки'],['pasta','Паста'],['risotto','Ризотто'],['soup','Супы'],['meat','Мясо'],['fish','Рыба'],['veg','Овощи и салаты'],['x','Выпечка и десерты']];
+const LIBF = [['all','Все'],['fit','Подходят мне'],['book','📖 Из книги'],['b','Завтраки'],['pasta','Паста'],['risotto','Ризотто'],['soup','Супы'],['meat','Мясо'],['fish','Рыба'],['veg','Овощи и салаты'],['x','Выпечка, десерты, соусы'],['world','🌍 Мировая кухня']];
 function libList(){
   const a = S.a, ex = effExcl(a), q = LIB.q.trim().toLowerCase();
   const list = RECIPES.filter(r => {
@@ -1033,6 +1050,7 @@ function libList(){
     if (f === 'book' && !r.book) return false;
     if (f === 'b' && !r.m.includes('b')) return false;
     if (f === 'x' && !r.m.includes('x')) return false;
+    if (f === 'world' && !r.world) return false;
     if (['pasta','risotto','soup','meat','fish'].includes(f) && r.t !== f) return false;
     if (f === 'veg' && !['veg','salad'].includes(r.t)) return false;
     if (q && !(r.n + ' ' + r.it + ' ' + r.ing.map(i => i[0]).join(' ')).toLowerCase().includes(q)) return false;
@@ -1043,7 +1061,7 @@ function libList(){
     return `<button class="card rc${w ? ' off' : ''}" data-act="open" data-id="${r.id}">${pic(r, 'se')}<span><b>${esc(r.n)}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал${r.book ? ' · 📖' : ''}${n ? ' · ✓' + n : ''}</small>${w ? `<small>Не подходит: ${esc(w)}</small>` : ''}</span></button>`; }).join('')}</div>`;
 }
 function libHTML(){
-  return `<h1 style="margin-top:4px">Рецепты</h1><p class="sub">${RECIPES.length} блюд итальянской кухни. Блюда, отмеченные 📖, — по мотивам книг «Everyday Italian» и «Knife Drop».</p>
+  return `<h1 style="margin-top:4px">Рецепты</h1><p class="sub">${RECIPES.length} блюд: итальянская кухня и мировая из «Knife Drop». Блюда, отмеченные 📖, — по мотивам книг «Everyday Italian» и «Knife Drop».</p>
     <input class="search" id="libq" placeholder="Поиск: блюдо или продукт" value="${esc(LIB.q)}">
     <div class="hscroll">${LIBF.map(f => `<button class="chip sm${LIB.f === f[0] ? ' on' : ''}" data-act="libF" data-v="${f[0]}">${f[1]}</button>`).join('')}</div>
     <div id="liblist">${libList()}</div>`;
