@@ -279,16 +279,16 @@ input[type=range]{width:100%;accent-color:var(--acc2);margin:6px 0}
 /* таймеры */
 .tdock{position:fixed;z-index:25;right:max(12px, env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;width:min(340px, calc(100vw - 24px))}
 .tdock:empty{display:none}
-.tm{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--ink);color:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.tm .tmain{flex:1;min-width:0}
-.tm small{display:block;font-size:11.5px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tm b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.tm .tl{font-size:12px;opacity:.8;margin-left:6px}
-.tm .tb{display:flex;gap:4px}
-.tm button{height:36px;min-width:36px;padding:0 10px;border-radius:10px;background:rgba(127,127,127,.25);color:inherit;font-weight:700;font-size:14px}
-.tm.ring{background:var(--red);color:#fff;animation:ringp 1s ease-in-out infinite}
-.tm.ring button{background:#fff;color:var(--red)}
-.tm.paused b{opacity:.6}
+.tmr{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--ink);color:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.tmr .tmain{flex:1;min-width:0}
+.tmr small{display:block;font-size:11.5px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmr b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tmr .tl{font-size:12px;opacity:.8;margin-left:6px}
+.tmr .tb{display:flex;gap:4px}
+.tmr button{height:36px;min-width:36px;padding:0 10px;border-radius:10px;background:rgba(127,127,127,.25);color:inherit;font-weight:700;font-size:14px}
+.tmr.ring{background:var(--red);color:#fff;animation:ringp 1s ease-in-out infinite}
+.tmr.ring button{background:#fff;color:var(--red)}
+.tmr.paused b{opacity:.6}
 @keyframes ringp{50%{transform:scale(1.025)}}
 body.has-timers .wrap{padding-bottom:220px}
 body.has-timers .sheet{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
@@ -1173,7 +1173,7 @@ function renderTimers(){
   document.body.classList.toggle('has-timers', TIMERS.length > 0);
   el.innerHTML = TIMERS.map(t => {
     const extra = t.max > t.sec ? ' · можно ещё до ' + fmtT(t.max - t.sec) : '';
-    return `<div class="tm${t.done ? ' ring' : ''}${t.paused != null ? ' paused' : ''}" data-tid="${t.id}">
+    return `<div class="tmr${t.done ? ' ring' : ''}${t.paused != null ? ' paused' : ''}" data-tid="${t.id}">
       <div class="tmain"><small>${esc(t.title)}</small>${t.done ? `<b>Готово!</b><span class="tl">проверь${esc(extra)}</span>` : `<b class="tt">${fmtT(tLeft(t))}</b><span class="tl">${esc(t.label)}</span>`}</div>
       <div class="tb">${t.done ? `<button data-act="tDel" data-id="${t.id}">Выключить</button>`
         : `<button data-act="tPause" data-id="${t.id}" aria-label="${t.paused != null ? 'Продолжить' : 'Пауза'}">${t.paused != null ? '▶' : '❚❚'}</button><button data-act="tAdd" data-id="${t.id}" aria-label="Добавить минуту">+1</button><button data-act="tDel" data-id="${t.id}" aria-label="Удалить таймер">✕</button>`}</div></div>`;

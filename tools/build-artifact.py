@@ -23,6 +23,11 @@ def main(out_dir: str) -> None:
         f.write(head_part.strip() + "\n" + body_part.strip() + "\n")
     for name in FILES:
         shutil.copyfile(os.path.join(ROOT, name), os.path.join(out_dir, name))
+    img = os.path.join(ROOT, "img")
+    if os.path.isdir(img):
+        dst = os.path.join(out_dir, "img")
+        shutil.rmtree(dst, ignore_errors=True)
+        shutil.copytree(img, dst)
     print("ok:", out_dir)
 
 

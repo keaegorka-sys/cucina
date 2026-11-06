@@ -199,8 +199,48 @@ def cmd_download(path, choice_path=None):
     print("downloaded", len(meta))
 
 
+def short_author(a):
+    """Короткая подпись автора: без текста лицензии, почты и пояснений Commons."""
+    a = re.sub(r"^No machine-readable author provided\.\s*", "", a or "")
+    a = re.sub(r"\s+assumed \(based on copyright claims\)\.?$", "", a)
+    a = re.sub(r"\S+@\S+", "", a)
+    a = re.split(r"\s+(?:I'd|This file|Own work|©|Photo by|Photograph)|\.\s|\n", a)[0]
+    a = re.sub(r"(\S+) \(\1\)", r"\1", a).strip(" ,;-")
+    if len(a) > 60:
+        a = a[:57].rsplit(" ", 1)[0] + "…"
+    return a or "автор указан на странице файла"
+
+
+def cmd_build(path, choice_path, cache_dir):
+    """Собирает img/ и photos.js из уже скачанных кандидатов (cache_dir/<id>__<n>.jpg):
+    сжимает до 600 px по ширине, JPEG качество 80 — чтобы репозиторий и сайт оставались лёгкими."""
+    from PIL import Image
+    cands = json.load(open(path, encoding="utf-8"))
+    choice = json.load(open(choice_path, encoding="utf-8"))
+    out = os.path.join(ROOT, "img")
+    os.makedirs(out, exist_ok=True)
+    meta = {}
+    for rid, k in choice.items():
+        lst = cands.get(rid) or []
+        if k is None or not lst or k >= len(lst):
+            continue
+        c = lst[k]
+        im = Image.open(os.path.join(cache_dir, f"{rid}__{k}.jpg")).convert("RGB")
+        if im.width > 600:
+            im = im.resize((600, round(im.height * 600 / im.width)), Image.LANCZOS)
+        im.save(os.path.join(out, rid + ".jpg"), "JPEG", quality=80, optimize=True, progressive=True)
+        meta[rid] = {"f": "img/" + rid + ".jpg", "a": short_author(c["author"]), "l": c["license"], "u": c["page"]}
+    with open(os.path.join(ROOT, "photos.js"), "w", encoding="utf-8", newline="\n") as f:
+        f.write("/* Фотографии блюд с Wikimedia Commons (свободные лицензии). Собрано tools/photos.py.\n"
+                "   f — файл, a — автор, l — лицензия, u — страница фото. */\n")
+        f.write("window.PHOTOS = " + json.dumps(meta, ensure_ascii=False, indent=0) + ";\n")
+    print("built", len(meta))
+
+
 if __name__ == "__main__":
-    if len(sys.argv) >= 3 and sys.argv[1] == "search":
+    if len(sys.argv) >= 5 and sys.argv[1] == "build":
+        cmd_build(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) >= 3 and sys.argv[1] == "search":
         cmd_search(sys.argv[2])
     elif len(sys.argv) >= 3 and sys.argv[1] == "download":
         cmd_download(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
