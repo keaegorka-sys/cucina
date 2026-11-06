@@ -247,6 +247,27 @@ input[type=range]{width:100%;accent-color:var(--acc2);margin:6px 0}
 .stp i{flex:0 0 26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accInk);font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center}
 .stp.on{opacity:.45}
 .stp.on i{background:var(--green);color:#fff}
+.stp{cursor:pointer}
+.stp .tchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tchip{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 11px;border-radius:9px;background:var(--soft);color:var(--accInk);font-weight:700;font-size:13px}
+.tchip:hover{background:var(--acc2);color:#231C15}
+.tcustom{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 10px}
+/* таймеры */
+.tdock{position:fixed;z-index:25;right:max(12px, env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;width:min(340px, calc(100vw - 24px))}
+.tdock:empty{display:none}
+.tm{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--ink);color:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.tm .tmain{flex:1;min-width:0}
+.tm small{display:block;font-size:11.5px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tm .tl{font-size:12px;opacity:.8;margin-left:6px}
+.tm .tb{display:flex;gap:4px}
+.tm button{height:36px;min-width:36px;padding:0 10px;border-radius:10px;background:rgba(127,127,127,.25);color:inherit;font-weight:700;font-size:14px}
+.tm.ring{background:var(--red);color:#fff;animation:ringp 1s ease-in-out infinite}
+.tm.ring button{background:#fff;color:var(--red)}
+.tm.paused b{opacity:.6}
+@keyframes ringp{50%{transform:scale(1.025)}}
+body.has-timers .wrap{padding-bottom:220px}
+body.has-timers .sheet{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
 .tip{padding:12px 14px;border-radius:14px;background:var(--greenSoft);font-size:14px;margin-bottom:12px}
 .stars{display:flex;gap:6px;margin:8px 0}
 .stars button{font-size:28px;line-height:1;color:var(--line)}
@@ -269,6 +290,7 @@ textarea{width:100%;min-height:70px;border-radius:12px;border:1.5px solid var(--
 <!--ARTIFACT-BODY-->
 <div id="app"></div>
 <div id="modal" class="modal" hidden></div>
+<div id="timers" class="tdock" aria-live="polite"></div>
 
 <script src="recipes.js"></script>
 <script src="recipes-book.js"></script>
@@ -968,8 +990,10 @@ function recipeHTML(){
       ${M.pf !== 1 ? `<p class="muted small" style="margin:10px 0 0">Порции ${pfStr(M.pf)} от обычных — под твою норму ${num(a.kcal)} ккал. Получится ≈ ${Math.round(r.kcal * M.pf)} ккал на порцию.</p>` : ''}
       ${drop.length ? `<p class="muted small" style="margin:10px 0 0">Убрано по твоим настройкам: ${esc(drop.map(i => i[0].toLowerCase()).join(', '))}</p>` : ''}
     </div>
-    <div class="card sec"><h3><span>Как готовить</span><span class="muted small">нажимай на шаг — отметится</span></h3>
-      ${r.steps.map((s, i) => `<button class="stp${M.steps.has(i) ? ' on' : ''}" data-act="stp" data-i="${i}"><i>${M.steps.has(i) ? '✓' : i + 1}</i><span>${esc(s)}</span></button>`).join('')}
+    <div class="card sec"><h3><span>Как готовить</span><button class="tchip" data-act="tCustom">⏱ Свой таймер</button></h3>
+      ${M.custom ? `<div class="tcustom">${[1,2,3,5,7,10,15,20,25,30,40,60].map(n => `<button class="tchip" data-act="timer" data-sec="${n * 60}" data-label="${n} мин" data-step="-1">${n} мин</button>`).join('')}</div>` : ''}
+      <p class="muted small" style="margin:0 0 4px">Нажимай на шаг — он отметится. ⏱ — запустить таймер.</p>
+      ${r.steps.map((s, i) => { const ts = stepTimers(s); return `<div class="stp${M.steps.has(i) ? ' on' : ''}" role="button" tabindex="0" data-act="stp" data-i="${i}"><i>${M.steps.has(i) ? '✓' : i + 1}</i><span>${esc(s)}${ts.length ? `<span class="tchips">${ts.map(t => `<button class="tchip" data-act="timer" data-sec="${t.sec}" data-max="${t.max}" data-label="${esc(t.label)}" data-step="${i}">⏱ ${esc(t.label)}</button>`).join('')}</span>` : ''}</span></div>`; }).join('')}
     </div>
     ${r.tip ? `<div class="tip">💡 ${esc(r.tip)}</div>` : ''}
     <div class="card sec">
@@ -993,6 +1017,82 @@ function pickerHTML(){
     <input class="search" id="pickq" placeholder="Поиск" value="${esc(M.q || '')}">
     <div id="picklist">${list.map(({ r }) => `<button class="pick" data-act="pickSet" data-id="${r.id}"><span class="se">${r.e}</span><span style="flex:1"><b>${esc(r.n)}${cur && cur.id === r.id ? ' · сейчас' : ''}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал · ≈ ${rub(costPortion(r, ex))}/порц.${r.book ? ' · 📖' : ''}</small></span></button>`).join('') || '<p class="muted">Ничего не нашлось</p>'}</div>`;
 }
+/* =================== ТАЙМЕРЫ =================== */
+/* Находит в тексте шага время: «10 минут», «10–12 минут», «30 секунд», «1,5–2 часа».
+   Не трогает «за 10 минут», «на 2 минуты меньше» и всё длиннее 4 часов. */
+function stepTimers(s){
+  const re = /(\d+(?:[.,]\d+)?)(?:\s*[–—-]\s*(\d+(?:[.,]\d+)?))?\s*(секунд|сек|минут|мин|час)/gi;
+  const out = [], seen = new Set(); let m;
+  while ((m = re.exec(s))) {
+    const before = s.slice(Math.max(0, m.index - 4), m.index).toLowerCase();
+    const after = s.slice(re.lastIndex, re.lastIndex + 14).toLowerCase();
+    if (/за\s$/.test(before) || /^[а-яё]*\s+меньше/.test(after)) continue;
+    const unit = m[3].toLowerCase(), mul = unit.startsWith('сек') ? 1 : unit.startsWith('час') ? 3600 : 60;
+    const a = parseFloat(m[1].replace(',', '.')), b = m[2] ? parseFloat(m[2].replace(',', '.')) : a;
+    const sec = Math.round(a * mul), max = Math.round(b * mul);
+    if (sec < 10 || sec > 4 * 3600) continue;
+    const label = (m[2] ? m[1] + '–' + m[2] : m[1]) + ' ' + (mul === 1 ? 'сек' : mul === 60 ? 'мин' : 'ч');
+    if (!seen.has(label)) { seen.add(label); out.push({ sec, max, label }); }
+  }
+  return out;
+}
+const TKEY = 'cucina-timers', BASE_TITLE = document.title;
+let TIMERS = (() => { try { return JSON.parse(localStorage.getItem(TKEY)) || []; } catch(e) { return []; } })();
+let AC = null, WAKE = null, lastBeep = 0;
+function saveTimers(){ try { localStorage.setItem(TKEY, JSON.stringify(TIMERS)); } catch(e){} }
+const tLeft = t => t.paused != null ? t.paused : Math.max(0, Math.ceil((t.ends - Date.now()) / 1000));
+function fmtT(s){ const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); }
+function ensureAudio(){ try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch(e){} }
+function beep(){
+  if (!AC) return;
+  try {
+    const t0 = AC.currentTime;
+    [0, 0.28, 0.56].forEach(d => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = 'sine'; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(0.5, t0 + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.22);
+      o.connect(g); g.connect(AC.destination); o.start(t0 + d); o.stop(t0 + d + 0.25);
+    });
+  } catch(e){}
+}
+async function keepAwake(){ try { if (!WAKE && navigator.wakeLock) { WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } } catch(e){} }
+function releaseWake(){ if (WAKE) { try { WAKE.release(); } catch(e){} WAKE = null; } }
+const running = () => TIMERS.some(t => !t.done && t.paused == null);
+function startTimer(sec, max, label, title){
+  ensureAudio();
+  TIMERS.push({ id: String(Date.now()) + Math.random().toString(36).slice(2, 6), sec, max: max || sec, label, title, ends: Date.now() + sec * 1000, paused: null, done: false });
+  saveTimers(); renderTimers(); keepAwake();
+  toast('⏱ Таймер запущен: ' + label);
+}
+function renderTimers(){
+  const el = $('#timers'); if (!el) return;
+  document.body.classList.toggle('has-timers', TIMERS.length > 0);
+  el.innerHTML = TIMERS.map(t => {
+    const extra = t.max > t.sec ? ' · можно ещё до ' + fmtT(t.max - t.sec) : '';
+    return `<div class="tm${t.done ? ' ring' : ''}${t.paused != null ? ' paused' : ''}" data-tid="${t.id}">
+      <div class="tmain"><small>${esc(t.title)}</small>${t.done ? `<b>Готово!</b><span class="tl">проверь${esc(extra)}</span>` : `<b class="tt">${fmtT(tLeft(t))}</b><span class="tl">${esc(t.label)}</span>`}</div>
+      <div class="tb">${t.done ? `<button data-act="tDel" data-id="${t.id}">Выключить</button>`
+        : `<button data-act="tPause" data-id="${t.id}" aria-label="${t.paused != null ? 'Продолжить' : 'Пауза'}">${t.paused != null ? '▶' : '❚❚'}</button><button data-act="tAdd" data-id="${t.id}" aria-label="Добавить минуту">+1</button><button data-act="tDel" data-id="${t.id}" aria-label="Удалить таймер">✕</button>`}</div></div>`;
+  }).join('');
+}
+function tick(){
+  let changed = false, ringing = false;
+  for (const t of TIMERS) {
+    if (!t.done && t.paused == null && Date.now() >= t.ends) {
+      t.done = true; t.doneAt = Date.now(); changed = true;
+      try { if (navigator.vibrate) navigator.vibrate([400, 150, 400, 150, 400]); } catch(e){}
+    }
+    if (t.done && Date.now() - (t.doneAt || 0) < 120000) ringing = true;   // звеним до 2 минут
+  }
+  if (changed) { saveTimers(); renderTimers(); }
+  else document.querySelectorAll('#timers [data-tid]').forEach(el => { const t = TIMERS.find(x => x.id === el.dataset.tid); const b = el.querySelector('.tt'); if (t && b) b.textContent = fmtT(tLeft(t)); });
+  if (ringing && Date.now() - lastBeep > 1500) { beep(); lastBeep = Date.now(); }
+  document.title = TIMERS.some(t => t.done) ? '🔔 Готово! — ' + BASE_TITLE : BASE_TITLE;
+  if (!running()) releaseWake();
+}
+setInterval(tick, 500);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { if (running()) keepAwake(); tick(); } });
+
 let CONF = null;
 function ask(title, text, ok, fn){ CONF = fn; M = { kind:'confirm', title, text, ok }; renderModal(); }
 function confirmHTML(){
@@ -1079,6 +1179,19 @@ document.addEventListener('click', e => {
     case 'pickSet': setSlot(M.di, M.m, ds.id); M = null; renderModal(); render(); toast(R[ds.id].e + ' ' + R[ds.id].n); break;
     case 'por': M.portions = Math.max(1, Math.min(20, M.portions + Number(ds.d))); renderModal(); break;
     case 'stp': { const i = Number(ds.i); M.steps.has(i) ? M.steps.delete(i) : M.steps.add(i); renderModal(); break; }
+    case 'tCustom': M.custom = !M.custom; renderModal(); break;
+    case 'timer': {
+      const r = M && R[M.id], st = Number(ds.step);
+      startTimer(Number(ds.sec), Number(ds.max) || Number(ds.sec), ds.label, r ? r.e + ' ' + r.n + (st >= 0 ? ' · шаг ' + (st + 1) : '') : 'Таймер');
+      if (M && M.custom) { M.custom = false; renderModal(); }
+      break;
+    }
+    case 'tPause': { const t = TIMERS.find(x => x.id === ds.id); if (!t) break;
+      if (t.paused == null) t.paused = tLeft(t); else { t.ends = Date.now() + t.paused * 1000; t.paused = null; ensureAudio(); keepAwake(); }
+      saveTimers(); renderTimers(); break; }
+    case 'tAdd': { const t = TIMERS.find(x => x.id === ds.id); if (!t) break;
+      if (t.paused != null) t.paused += 60; else t.ends += 60000; saveTimers(); renderTimers(); break; }
+    case 'tDel': TIMERS = TIMERS.filter(x => x.id !== ds.id); saveTimers(); renderTimers(); tick(); break;
     case 'logStart': M.log = true; M.rating = 0; renderModal(); break;
     case 'logCancel': M.log = false; renderModal(); break;
     case 'rate': M.rating = Number(ds.v); { const n = $('#lognote') ? $('#lognote').value : ''; renderModal(); if ($('#lognote')) $('#lognote').value = n; } break;
@@ -1108,12 +1221,14 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => { if (e.target.id === 'budget') render(); });
 document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role=button][data-act]')) { e.preventDefault(); e.target.click(); return; }
   if (e.key === 'Escape' && M) { M = null; CONF = null; renderModal(); }
   if (view === 'quiz' && STEPS[Q.step].k === 'taste' && Q.ti < Q.deck.length && !M) {
     if (e.key === 'ArrowRight') react(1); if (e.key === 'ArrowLeft') react(-1);
   }
 });
 render();
+renderTimers();
 initCloud();
 </script>
 </body>
