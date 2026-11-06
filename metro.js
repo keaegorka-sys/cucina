@@ -169,6 +169,10 @@ items: {
 "Грецкие орехи или семечки (вместо кедровых)":[325480,"Fine Life Орех грецкий очищенный сушеный, 120г","/products/120g-gretskiy-oreh-fine-life-ochischennyy-sushenyy",199,"шт",120,"г",{},0],
 "Полутвёрдый сыр (российский, гауда)":[106091,"Сыр полутвердый Natura Гауда 45%, 180г","/products/180g-syr-gauda-45-natura-kusok-bzmzh",205,"шт",180,"г",{},0],
 "Сыр с голубой плесенью или брынза":[92457,"Сыр Dorblu Chef Mix с голубой плесенью 50%, 100г","/products/100g-syr-50-dorblu-chef-mix-s-goluboy-plesenyu-bzmzh",139,"шт",100,"г",{},0],
+"Буррата":[483601,"Сыр Galbani Буррата mini мягкий 50%, 125г","/products/syr-galbani-burrata-mini-myagkiy-50-125g-483601",299,"шт",125,"г",{},0],
+"Брокколи":[426327,"Капуста брокколи Agama замороженная, 400г","/products/kapusta-brokkoli-agama-zamorozhennaya-400g",149,"шт",400,"г",{},0],
+"Семена фенхеля":[101573,"METRO Chef Фенхель, 100г","/products/fenhel-metro-chef-100g",275,"шт",100,"г",{"ч.л.":2},0],
+"Томаты черри жёлтые":[375888,"Томаты черри Voronezh желтые, 250г","/products/tomaty-cherri-zheltye-250g-375888",249,"шт",250,"г",{},0],
 "Мидии в раковинах (замороженные)":[93882,"Мидии в голубых раковинах целые варено-мороженые 40/60, 1кг","/products/midii-v-golubyh-rakovinah-vareno-morozhenye-40-60-1kg",769,"шт",1000,"г",{},0],
 "Филе минтая или хека":[96490,"METRO Chef Филе минтая порционное без кожи свежемороженое, 800г","/products/metro-chef-file-mintaya-portsionnoye-svezhemorozhenoye-800g",849,"шт",800,"г",{},0]
 }

@@ -294,6 +294,7 @@ textarea{width:100%;min-height:70px;border-radius:12px;border:1.5px solid var(--
 
 <script src="recipes.js"></script>
 <script src="recipes-book.js"></script>
+<script src="recipes-kd.js"></script>
 <script src="prices.js"></script>
 <script src="metro.js"></script>
 <script>
@@ -738,7 +739,7 @@ function quizHTML(){
       <div class="card" style="margin-top:14px">
         ${switchHTML('leftovers', d.leftovers, 'Ужин с запасом на обед', 'Готовишь вечером двойную порцию — завтра обед уже есть')}
         ${switchHTML('project', d.project, 'Проект выходного', 'Фокачча, тирамису, домашний соус — практика без спешки')}
-        ${switchHTML('book', d.book, 'Больше блюд из книги', '«Everyday Italian» — Giada De Laurentiis')}
+        ${switchHTML('book', d.book, 'Больше блюд из книг', '«Everyday Italian» и «Knife Drop»')}
       </div>`;
       break;
     case 'kcal':
@@ -803,7 +804,7 @@ function tasteHTML(){
   const card = (id, cls) => { const r = R[id]; return `<div class="card tcard ${cls}" ${cls ? '' : 'id="tcard"'}>
     <span class="stamp like">НРАВИТСЯ</span><span class="stamp nope">НЕ МОЁ</span>
     <div class="te">${r.e}</div><div class="tn">${esc(r.n)}</div><div class="ti">${esc(r.it)}</div>
-    <div class="tm">${r.kcal} ккал · порция · ${timeStr(r.time)} · ${DIFF[r.d]}</div><div class="td">${esc(r.desc)}</div>${r.book ? '<div style="margin-top:10px"><span class="badge b">📖 из книги</span></div>' : ''}</div>`; };
+    <div class="tm">${r.kcal} ккал · порция · ${timeStr(r.time)} · ${DIFF[r.d]}</div><div class="td">${esc(r.desc)}</div>${r.book ? `<div style="margin-top:10px"><span class="badge b">📖 ${esc(r.src || 'из книги')}</span></div>` : ''}</div>`; };
   const next = Q.deck[Q.ti + 1];
   return `<div class="deck">${next ? card(next, 'under') : ''}${card(Q.deck[Q.ti], '')}</div>
     <div class="swbtns"><button class="btn no" data-act="taste" data-v="-1">✕ Не моё</button><button class="btn ghost small" data-act="taste" data-v="0">Пропустить</button><button class="btn yes" data-act="taste" data-v="1">❤ Нравится</button></div>
@@ -835,7 +836,7 @@ function introHTML(){
       <div class="istep"><span class="ic">🍝<b>2</b></span><div><strong>Получи меню на каждый день</strong><span>Завтраки, обеды, ужины и проект выходного — с рецептами</span></div></div>
       <div class="istep"><span class="ic">📈<b>3</b></span><div><strong>Покупай по списку и прокачивайся</strong><span>Всё посчитано, а ты осваиваешь новую технику каждую неделю</span></div></div>
     </div>
-    <p class="fineprint">${RECIPES.length} рецептов · ${nb} по мотивам «Everyday Italian»<br>Бесплатно. Твоё меню и прогресс видишь только ты</p>
+    <p class="fineprint">${RECIPES.length} рецептов · ${nb} по мотивам книг «Everyday Italian» и «Knife Drop»<br>Бесплатно. Твоё меню и прогресс видишь только ты</p>
   </div>
   <div class="cta-bar"><button class="cta" data-act="start">Собрать рацион <span>›</span></button></div>`;
 }
@@ -940,7 +941,7 @@ function libList(){
     return `<button class="card rc${w ? ' off' : ''}" data-act="open" data-id="${r.id}"><span class="se">${r.e}</span><span><b>${esc(r.n)}</b><small>${timeStr(r.time)} · ${dots(r.d)} · ${r.kcal} ккал${r.book ? ' · 📖' : ''}${n ? ' · ✓' + n : ''}</small>${w ? `<small>Не подходит: ${esc(w)}</small>` : ''}</span></button>`; }).join('')}</div>`;
 }
 function libHTML(){
-  return `<h1 style="margin-top:4px">Рецепты</h1><p class="sub">${RECIPES.length} блюд итальянской кухни. Блюда, отмеченные 📖, — по мотивам книги «Everyday Italian».</p>
+  return `<h1 style="margin-top:4px">Рецепты</h1><p class="sub">${RECIPES.length} блюд итальянской кухни. Блюда, отмеченные 📖, — по мотивам книг «Everyday Italian» и «Knife Drop».</p>
     <input class="search" id="libq" placeholder="Поиск: блюдо или продукт" value="${esc(LIB.q)}">
     <div class="hscroll">${LIBF.map(f => `<button class="chip sm${LIB.f === f[0] ? ' on' : ''}" data-act="libF" data-v="${f[0]}">${f[1]}</button>`).join('')}</div>
     <div id="liblist">${libList()}</div>`;
@@ -980,7 +981,7 @@ function recipeHTML(){
   const sl = M.di != null ? S.plan.days[M.di].slots[M.m] : null;
   return `<button class="x" data-act="close" aria-label="Закрыть">✕</button>
     <div class="rhero"><span class="re">${r.e}</span><div><h2>${esc(r.n)}</h2><div class="it">${esc(r.it)}</div></div></div>
-    <div class="meta"><span>⏱ ${timeStr(r.time)}</span><span>${dots(r.d)} ${DIFF[r.d]}</span><span>🔥 ${Math.round(r.kcal * M.pf / 10) * 10} ккал/порц.</span><span>${dietBadge(r, ex)}</span><span>≈ ${rub(costPortion(r, ex) * M.portions * M.pf)}</span>${r.book ? '<span>📖 по мотивам книги</span>' : ''}</div>
+    <div class="meta"><span>⏱ ${timeStr(r.time)}</span><span>${dots(r.d)} ${DIFF[r.d]}</span><span>🔥 ${Math.round(r.kcal * M.pf / 10) * 10} ккал/порц.</span><span>${dietBadge(r, ex)}</span><span>≈ ${rub(costPortion(r, ex) * M.portions * M.pf)}</span>${r.book ? `<span>📖 по мотивам «${esc(r.src || 'Everyday Italian')}»</span>` : ''}</div>
     ${sl && sl.left ? `<div class="tip">🍱 Это остатки вчерашнего ужина — достаточно разогреть. Рецепт ниже — для справки.</div>` : ''}
     ${w ? `<div class="tip" style="background:var(--redSoft)">⚠️ По твоим настройкам не подходит: ${esc(w)}</div>` : ''}
     <p style="margin:0 0 4px">${esc(r.desc)}</p>

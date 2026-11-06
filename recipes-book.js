@@ -351,9 +351,9 @@ const B = [
  'Нарежь фрукты, апельсин очисти от плёнок и нарежь дольками, смешай с его соком.',
  'Разложи фрукты по креманкам, сверху — крем и листик мяты.']}
 ];
-B.forEach(r=>{ r.book = true; });
+B.forEach(r=>{ r.book = true; r.src = 'Everyday Italian'; });
 window.RECIPES = (window.RECIPES || []).concat(B);
 // Блюда из базовой коллекции, которые тоже есть в книге
 ['piccata','cacciatora','caprese','panzanella','panna_cotta','lasagne','carbonara','aglio_olio','pesto','bolognese','amatriciana','frittata','risotto_funghi','orata_forno','saltimbocca']
-  .forEach(id => { const r = window.RECIPES.find(x => x.id === id); if (r) r.book = true; });
+  .forEach(id => { const r = window.RECIPES.find(x => x.id === id); if (r) { r.book = true; r.src = 'Everyday Italian'; } });
 })();
