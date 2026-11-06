@@ -252,6 +252,8 @@ input[type=range]{width:100%;accent-color:var(--acc2);margin:6px 0}
 .tchip{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 11px;border-radius:9px;background:var(--soft);color:var(--accInk);font-weight:700;font-size:13px}
 .tchip:hover{background:var(--acc2);color:#231C15}
 .tcustom{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 10px}
+.dropchip{margin-top:6px;height:28px;font-size:12px;background:var(--redSoft);color:var(--red)}
+.dropchip:hover{background:var(--red);color:#fff}
 /* калькулятор калорий */
 .bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 0}
 .fld{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
@@ -358,10 +360,10 @@ function rng(seed){ let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>
 
 const MEAL = { b:{t:'Завтрак', e:'☕'}, l:{t:'Обед', e:'🍝'}, d:{t:'Ужин', e:'🍽'}, x:{t:'Проект выходного', e:'🧑‍🍳'} };
 const CATS = [['v','Овощи, зелень, фрукты','🥬'],['m','Мясо и птица','🥩'],['f','Рыба и морепродукты','🐟'],['d','Молочное, сыры, яйца','🧀'],['g','Бакалея','🌾'],['c','Консервы и соусы','🥫'],['b','Хлеб и выпечка','🥖'],['o','Вино и напитки','🍷'],['s','Базовое — проверь, есть ли дома','🧂']];
-const TAGS = { gluten:'глютен', lactose:'лактоза', eggs:'яйца', nuts:'орехи', fish:'рыба', seafood:'морепродукты', meat:'мясо', pork:'свинина', mushrooms:'грибы', spicy:'острое', garlic:'чеснок', onion:'лук', eggplant:'баклажаны', olives:'оливки и каперсы', alcohol:'вино в блюдах' };
+const TAGS = { gluten:'глютен', lactose:'лактоза', eggs:'яйца', nuts:'орехи', fish:'рыба', seafood:'морепродукты', meat:'мясо', pork:'свинина', mushrooms:'грибы', spicy:'острое', garlic:'чеснок', onion:'лук', pepper:'болгарский перец', eggplant:'баклажаны', olives:'оливки и каперсы', alcohol:'вино в блюдах' };
 const EXCL = {
   allergy: [['gluten','🌾','Глютен'],['lactose','🥛','Лактоза'],['eggs','🥚','Яйца'],['nuts','🌰','Орехи'],['fish','🐟','Рыба'],['seafood','🦐','Морепродукты']],
-  dislike: [['mushrooms','🍄','Грибы'],['pork','🥓','Свинина'],['spicy','🌶','Острое'],['garlic','🧄','Чеснок'],['onion','🧅','Лук'],['eggplant','🍆','Баклажаны'],['olives','🫒','Оливки и каперсы'],['alcohol','🍷','Вино в блюдах']]
+  dislike: [['mushrooms','🍄','Грибы'],['pork','🥓','Свинина'],['spicy','🌶','Острое'],['garlic','🧄','Чеснок'],['onion','🧅','Лук'],['pepper','🫑','Болгарский перец'],['eggplant','🍆','Баклажаны'],['olives','🫒','Оливки и каперсы'],['alcohol','🍷','Вино в блюдах']]
 };
 const DIETS = [['all','🥩','Всеядное','Ем всё: мясо, рыбу, овощи'],['pesc','🐟','Пескетарианство','Рыба и морепродукты, без мяса'],['veg','🧀','Вегетарианство','Без мяса и рыбы'],['vegan','🌱','Веганство','Только растительное']];
 const LEVELS = [[1,'🌱','Новичок','В будни — простые блюда, в выходные — шаг вперёд'],[2,'🍳','Уже готовлю','Будни — средние рецепты, выходные — сложные'],[3,'🔥','Хочу вызов','Сложные техники в любой день']];
@@ -662,6 +664,20 @@ function setSlot(di, m, id){
   if (m === 'd' && nx && nx.slots.l && nx.slots.l.left) { if (keeps(R[id])) nx.slots.l.id = id; else { delete nx.slots.l; const c = planCtx(di + 1, 'l'); const nid = pickBest(RECIPES.filter(r => eligible(r, S.a, c.ex)), 'l', c); if (nid) nx.slots.l = { id: nid }; } }
   save();
 }
+/* После нового исключения: заменить только те блюда меню, которые стали недопустимыми */
+function replaceIneligible(){
+  const a = S.a, ex = effExcl(a); let n = 0;
+  S.plan.days.forEach((day, di) => {
+    for (const m of Object.keys(day.slots)) {
+      const sl = day.slots[m]; if (sl.left) continue;
+      const r = R[sl.id]; if (r && eligible(r, a, ex, true)) continue;
+      const ctx = planCtx(di, m, [sl.id]);
+      const id = pickBest(RECIPES.filter(x => eligible(x, a, ctx.ex)), m, ctx);
+      if (id) { setSlot(di, m, id); n++; }
+    }
+  });
+  return n;
+}
 function swapSlot(di, m){
   const sl = S.plan.days[di].slots[m]; const rej = (sl.rej || []).concat(sl.id);
   const ctx = planCtx(di, m, rej); const pool = RECIPES.filter(r => eligible(r, S.a, ctx.ex));
@@ -698,7 +714,8 @@ function shopping(){
       for (const i of ingFor(r, ex)) {
         const pr = prod(i[0]);
         const k = pr ? 'sku' + pr.sku : i[0] + '|' + i[2];
-        const it = items[k] || (items[k] = { k, pr, name: pr ? pr.n : i[0], u: pr ? pr.u : i[2], cat: i[3], need: 0, pcs: 0, pcsG: 0, any: false, opt: true, clove: false, for: new Set() });
+        const it = items[k] || (items[k] = { k, pr, name: pr ? pr.n : i[0], u: pr ? pr.u : i[2], cat: i[3], need: 0, pcs: 0, pcsG: 0, any: false, opt: true, clove: false, for: new Set(), names: new Set() });
+        it.names.add(i[0]);
         if (it.cat === 's' && i[3] !== 's') it.cat = i[3];   // нужно не только «по вкусу» — в свой отдел
         if (i[4] !== 1) it.opt = false;
         if (i[2] === 'зубч') it.clove = true;
@@ -986,7 +1003,7 @@ function shopHTML(){
   const used = main.reduce((s, i) => s + i.used, 0), stock = total - used;
   const left = main.filter(i => !S.shop[i.k]).length, a = S.a, MT = window.METRO;
   const row = i => `<div class="item${S.shop[i.k] ? ' on' : ''}" data-act="shopToggle" data-k="${esc(i.k)}"><span class="cb">✓</span>
-      <span class="in">${i.pr ? `<a href="${esc(MT.base + i.pr.url)}" target="_blank" rel="noopener"><b>${esc(i.name)}</b></a>` : `<b>${esc(i.name)}</b>`}${i.opt ? ' <span class="badge g">по желанию</span>' : ''}<small>для: ${esc([...i.for].join(', '))}</small></span>
+      <span class="in">${i.pr ? `<a href="${esc(MT.base + i.pr.url)}" target="_blank" rel="noopener"><b>${esc(i.name)}</b></a>` : `<b>${esc(i.name)}</b>`}${i.opt ? ' <span class="badge g">по желанию</span>' : ''}<small>для: ${esc([...i.for].join(', '))}</small>${i.names.has('Болгарский перец') && !S.a.excl.includes('pepper') ? '<button class="tchip dropchip" data-act="dropTag" data-tag="pepper">✕ Убрать болгарский перец</button>' : ''}</span>
       <span class="iq"><b>${esc(i.label)}</b>${i.cost ? `<small>${rub(i.cost)}</small>` : ''}${i.sub ? `<small>${esc(i.sub)}</small>` : ''}</span></div>`;
   return `<h1 style="margin-top:4px">Список покупок</h1>
     <p class="sub">${weekTitle()} · на ${a.people} ${plural(a.people, ['человека','человек','человек'])}${a.leftovers ? ' · с запасом на обеды' : ''}. Осталось купить: ${left} из ${main.length}.</p>
@@ -1249,6 +1266,15 @@ document.addEventListener('click', e => {
       let v = (prev || (ds.k === 'kcal' ? 1700 : 0)) + Number(ds.d); v = Math.max(Number(ds.min), Math.min(Number(ds.max), v)); Q.d[ds.k] = v;
       if (ds.k === 'people' && prev !== v) Q.d.budget = Math.max(1500 * v, Math.min(10000 * v, Math.round(Q.d.budget / prev * v / 500) * 500));
       render(); break;
+    }
+    case 'dropTag': {
+      const tag = ds.tag, nm = TAGS[tag] || tag;
+      ask('Убрать ' + nm + '?', 'Уберём его из рецептов, а блюда, где он главный, заменим другими. Остальное меню не изменится.', 'Убрать', () => {
+        if (!S.a.excl.includes(tag)) S.a.excl.push(tag);
+        const n = replaceIneligible(); save(); render();
+        toast(nm.charAt(0).toUpperCase() + nm.slice(1) + ' убран' + (n ? ' · заменено блюд: ' + n : ''));
+      });
+      break;
     }
     case 'bToggle': Q.calc = !Q.calc; if (Q.calc && !Q.d.body) Q.d.body = bodyDefaults(); render(); break;
     case 'bset': Q.d.body[ds.k] = ds.k === 'act' ? Number(ds.v) : ds.v; render(); break;
